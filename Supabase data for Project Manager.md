@@ -1,0 +1,20 @@
+Supabase:
+
+project\_manager
+
+Password:  
+Gu\!tar1849
+
+JWT secret:  
+0Gz7tTh36OiH1C0LJuUh8z5YeCBt6cNrB+9P368TXMMu7NPn6pVjdJsaX7h25WB/ennJ38aZUygdDjHcn8ADMQ==
+
+Service role secret:  
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXJtcnNjZGtkdm52cmFweXZjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MzA5MDczNiwiZXhwIjoyMDc4NjY2NzM2fQ.KvI4kP\_dCUKRYMiS6khz1JVbW1G81NYeq9Njw5F9tAI
+
+Direct connection:  
+postgresql://postgres:Gu\!tar1849@db.xiurmrscdkdvnvrapyvc.supabase.co:5432/postgres
+
+NEXT\_PUBLIC\_SUPABASE\_URL=https://xiurmrscdkdvnvrapyvc.supabase.co
+
+NEXT\_PUBLIC\_SUPABASE\_ANON\_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpdXJtcnNjZGtkdm52cmFweXZjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMwOTA3MzYsImV4cCI6MjA3ODY2NjczNn0.KSUtXaqfuTQUYZHozYETtES-du8taCi1-2PequpiKkA
+
