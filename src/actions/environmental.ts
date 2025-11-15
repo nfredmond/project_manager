@@ -21,7 +21,7 @@ export async function upsertEnvironmentalFactorAction(formData: FormData) {
   const { error } = await supabase
     .from("environmental_factors")
     .upsert({ ...payload, tenant_id: tenant.id }, { onConflict: "project_id,factor" });
-  if (error) throw a new Error(error.message);
+  if (error) throw new Error(error.message);
   revalidatePath("/environmental");
 }
 
