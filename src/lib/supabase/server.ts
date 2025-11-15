@@ -4,8 +4,6 @@ import { cookies } from "next/headers";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-let cached: SupabaseClient | null = null;
-
 const requiredEnv = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"] as const;
 
 function invariantEnv() {
@@ -17,7 +15,6 @@ function invariantEnv() {
 }
 
 export function getServerSupabaseClient(): SupabaseClient {
-  if (cached) return cached;
   invariantEnv();
 
   type CookieStore = {
@@ -26,7 +23,8 @@ export function getServerSupabaseClient(): SupabaseClient {
     delete: (options: { name: string } & CookieOptions) => void;
   };
   const cookieStore = (cookies() as unknown) as CookieStore;
-  cached = (createServerClient(
+
+  return (createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -43,7 +41,5 @@ export function getServerSupabaseClient(): SupabaseClient {
       },
     },
   ) as unknown) as SupabaseClient;
-
-  return cached;
 }
 
