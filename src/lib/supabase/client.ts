@@ -5,23 +5,16 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 let browserClient: SupabaseClient | null = null;
 
-const requiredEnv = ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"] as const;
-
-function invariantEnv() {
-  requiredEnv.forEach((key) => {
-    if (!process.env[key]) {
-      throw new Error(`Missing env var: ${key}`);
-    }
-  });
-}
-
 export function getBrowserSupabaseClient(): SupabaseClient {
   if (browserClient) return browserClient;
-  invariantEnv();
-  browserClient = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  ) as unknown as SupabaseClient;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!supabaseUrl || !supabaseAnonKey) {
+    throw new Error("Missing env var: NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  }
+
+  browserClient = createBrowserClient(supabaseUrl, supabaseAnonKey) as unknown as SupabaseClient;
   return browserClient;
 }
 
