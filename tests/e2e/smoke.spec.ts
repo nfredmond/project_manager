@@ -38,6 +38,9 @@ test.describe("authenticated smoke flow", () => {
 
     await expect(page.getByRole("heading", { name: /caltrans & grants overview/i })).toBeVisible({ timeout: 20000 });
 
+    await gotoPath(page, "/projects");
+    await expect(page.getByRole("heading", { name: /projects & delivery/i })).toBeVisible();
+
     await page.getByRole("button", { name: /new project/i }).click();
     const dialog = page.getByRole("dialog", { name: /create project/i });
     await dialog.getByLabel("Name").fill(`Playwright project ${Date.now()}`);

@@ -47,11 +47,22 @@ export const getTenants = cache(async () => {
 });
 
 export const getActiveTenant = cache(async (): Promise<Tenant | null> => {
-  const profile = await getProfile();
-  if (!profile?.current_tenant) return null;
   const supabase = getServerSupabaseClient();
-  const { data } = await supabase.from("tenants").select("*").eq("id", profile.current_tenant).single();
-  return (data as Tenant) ?? null;
+  const profile = await getProfile();
+
+  if (profile?.current_tenant) {
+    const { data } = await supabase.from("tenants").select("*").eq("id", profile.current_tenant).single();
+    return (data as Tenant) ?? null;
+  }
+
+  const tenants = await getTenants();
+  const fallbackTenant = tenants[0]?.tenants ?? null;
+
+  if (fallbackTenant && profile) {
+    await supabase.from("profiles").update({ current_tenant: fallbackTenant.id }).eq("id", profile.id);
+  }
+
+  return fallbackTenant ?? null;
 });
 
 export const getActiveMembership = cache(async () => {
