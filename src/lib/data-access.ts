@@ -1,4 +1,3 @@
-import { cache } from "react";
 import { getServerSupabaseClient } from "./supabase/server";
 import type {
   CaltransPhase,
@@ -17,7 +16,7 @@ import type {
 } from "./types";
 import { summarizeBudget } from "./data-helpers";
 
-export const getProfile = cache(async () => {
+export const getProfile = async () => {
   const supabase = getServerSupabaseClient();
   const {
     data: { user },
@@ -31,9 +30,9 @@ export const getProfile = cache(async () => {
     return null;
   }
   return data as Profile;
-});
+};
 
-export const getTenants = cache(async () => {
+export const getTenants = async () => {
   const supabase = getServerSupabaseClient();
   const {
     data: { user },
@@ -76,9 +75,9 @@ export const getTenants = cache(async () => {
         tenants: tenantMap.get(membership.tenant_id) ?? null,
       }) as TenantUser,
   );
-});
+};
 
-export const getActiveTenant = cache(async (): Promise<Tenant | null> => {
+export const getActiveTenant = async (): Promise<Tenant | null> => {
   const supabase = getServerSupabaseClient();
   const profile = await getProfile();
   const tenantUsers = await getTenants();
@@ -97,9 +96,9 @@ export const getActiveTenant = cache(async (): Promise<Tenant | null> => {
   }
 
   return fallbackTenant ?? null;
-});
+};
 
-export const getActiveMembership = cache(async () => {
+export const getActiveMembership = async () => {
   const tenant = await getActiveTenant();
   if (!tenant) return null;
   const supabase = getServerSupabaseClient();
@@ -114,9 +113,9 @@ export const getActiveMembership = cache(async () => {
     .eq("user_id", user.id)
     .maybeSingle();
   return data;
-});
+};
 
-export const getProjects = cache(async (): Promise<Project[]> => {
+export const getProjects = async (): Promise<Project[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -130,9 +129,9 @@ export const getProjects = cache(async (): Promise<Project[]> => {
     return [];
   }
   return data as Project[];
-});
+};
 
-export const getGrants = cache(async (): Promise<Grant[]> => {
+export const getGrants = async (): Promise<Grant[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -146,9 +145,9 @@ export const getGrants = cache(async (): Promise<Grant[]> => {
     return [];
   }
   return data as Grant[];
-});
+};
 
-export const getCaltransPhases = cache(async (): Promise<CaltransPhase[]> => {
+export const getCaltransPhases = async (): Promise<CaltransPhase[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -162,9 +161,9 @@ export const getCaltransPhases = cache(async (): Promise<CaltransPhase[]> => {
     return [];
   }
   return data as CaltransPhase[];
-});
+};
 
-export const getCaltransInvoices = cache(async () => {
+export const getCaltransInvoices = async () => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -178,9 +177,9 @@ export const getCaltransInvoices = cache(async () => {
     return [];
   }
   return data ?? [];
-});
+};
 
-export const getMeetings = cache(async (): Promise<Meeting[]> => {
+export const getMeetings = async (): Promise<Meeting[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -190,9 +189,9 @@ export const getMeetings = cache(async (): Promise<Meeting[]> => {
     .eq("tenant_id", tenant.id)
     .order("meeting_date", { ascending: true });
   return (data as Meeting[]) ?? [];
-});
+};
 
-export const getRecordsRequests = cache(async (): Promise<RecordsRequest[]> => {
+export const getRecordsRequests = async (): Promise<RecordsRequest[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -202,9 +201,9 @@ export const getRecordsRequests = cache(async (): Promise<RecordsRequest[]> => {
     .eq("tenant_id", tenant.id)
     .order("received_on", { ascending: false });
   return (data as RecordsRequest[]) ?? [];
-});
+};
 
-export const getDocuments = cache(async (): Promise<Document[]> => {
+export const getDocuments = async (): Promise<Document[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -214,9 +213,9 @@ export const getDocuments = cache(async (): Promise<Document[]> => {
     .eq("tenant_id", tenant.id)
     .order("created_at", { ascending: false });
   return (data as Document[]) ?? [];
-});
+};
 
-export const getSalesTaxPrograms = cache(async () => {
+export const getSalesTaxPrograms = async () => {
   const tenant = await getActiveTenant();
   if (!tenant) return [] as SalesTaxProgram[];
   const supabase = getServerSupabaseClient();
@@ -226,9 +225,9 @@ export const getSalesTaxPrograms = cache(async () => {
     .eq("tenant_id", tenant.id)
     .order("created_at", { ascending: false });
   return (data as SalesTaxProgram[]) ?? [];
-});
+};
 
-export const getCommunityInputs = cache(async (): Promise<CommunityInput[]> => {
+export const getCommunityInputs = async (): Promise<CommunityInput[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -238,9 +237,9 @@ export const getCommunityInputs = cache(async (): Promise<CommunityInput[]> => {
     .eq("tenant_id", tenant.id)
     .order("created_at", { ascending: false });
   return (data as CommunityInput[]) ?? [];
-});
+};
 
-export const getEnvironmentalFactors = cache(async (): Promise<EnvironmentalFactor[]> => {
+export const getEnvironmentalFactors = async (): Promise<EnvironmentalFactor[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
@@ -250,8 +249,8 @@ export const getEnvironmentalFactors = cache(async (): Promise<EnvironmentalFact
     .eq("tenant_id", tenant.id)
     .order("created_at", { ascending: false });
   return (data as EnvironmentalFactor[]) ?? [];
-});
-export const getDashboardMetrics = cache(async (): Promise<DashboardMetrics | null> => {
+};
+export const getDashboardMetrics = async (): Promise<DashboardMetrics | null> => {
   const tenant = await getActiveTenant();
   if (!tenant) return null;
   const [projects, grants, inputs] = await Promise.all([getProjects(), getGrants(), getCommunityInputs()]);
@@ -263,4 +262,4 @@ export const getDashboardMetrics = cache(async (): Promise<DashboardMetrics | nu
     total_budget: summary.totalBudget,
     total_spent: summary.totalSpent,
   };
-});
+};
