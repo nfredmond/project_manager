@@ -25,6 +25,15 @@ RESEND_API_KEY=...
 COMMUNITY_ALERT_EMAIL=engagement@example.com
 ```
 
+### Feature highlights
+- **Caltrans LAPM**: phase + invoice tracker with PDF exports (`/caltrans`, `/api/caltrans/invoices/:id/pdf`)
+- **Grants**: AI narrative composer (Vercel AI SDK + GPT-4o mini), stage workflows, pipeline analytics
+- **Environmental**: Appendix G checklist with mitigation + lead agency tracking
+- **Documents**: Supabase Storage uploads with shadcn dialogs, versioning, and sharing
+- **Meetings & PRA**: governance hub for agendas, recordings, and PRA fulfillment
+- **Sales tax**: Measure revenue dashboards and compliance notes
+- **Community portal**: Public page at `/community/[slug]` + moderation workspace, Slack/Resend notifications
+
 ### Supabase
 - Schema + RLS via `supabase/migrations/001_initial_schema.sql`. Apply with Supabase CLI or MCP `apply_migration`.
 - Seed the demo data/tenants with `npm run seed` (uses `scripts/seed.mjs`). Demo creds: `demo@projectmanager.local / ProjectDemo!23`.
@@ -43,6 +52,12 @@ npx playwright test
 
 Visit `http://localhost:3000`. Signup creates tenant and admin membership. Dashboard available at `/dashboard`.
 
+### Testing & QA
+- `npm run lint` → ESLint + Next rules
+- `npm run typecheck` → strict TS
+- `npm run test` → Vitest unit tests (`tests/utils.test.ts`, `tests/data-access.test.ts`)
+- `npx playwright test` → smoke flow (landing + login)
+
 ### Deployment
 - Configured for Vercel (project id from `VERCEL DATA.md` + `.vercel/project.json`).
 - Set environment variables in Vercel dashboard or via `vercel env`. You can also rely on `vercel.json` checked into the repo.
@@ -50,8 +65,9 @@ Visit `http://localhost:3000`. Signup creates tenant and admin membership. Dashb
 - Deploy with `vercel deploy --prod` once logged in.
 
 ### Extras
-- PDF exports: `/api/caltrans/invoices/:id/pdf` and `/api/reports/summary/pdf?tenant_id=...`
-- Notifications: sending to Slack + Resend email when invoices/requests/community inputs are created (configurable via env vars).
-- Invite flows: settings page can generate invite links, `/invite/[token]` accepts them.
-- Password reset: `/reset` and `/update-password`.
-- Role-based guards hide editing UI for viewer-only members.
+- PDF exports: `/api/caltrans/invoices/:id/pdf` and `/api/reports/summary/pdf`
+- Notifications: Slack + Resend via `SLACK_WEBHOOK_URL`, `RESEND_API_KEY`, `COMMUNITY_ALERT_EMAIL`
+- Public engagement: `/community/[slug]` uses `/api/community/submit` + moderation dashboard
+- Invite flows: settings page generates invite links (`/invite/[token]`)
+- Password reset: `/reset` and `/update-password`
+- Role-based guards hide editing UI for viewer-only members

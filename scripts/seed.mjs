@@ -97,6 +97,44 @@ const communitySamples = [
   },
 ];
 
+const meetings = [
+  {
+    title: "Board workshop",
+    meeting_type: "board",
+    meeting_date: "2024-12-05",
+    location: "Arroyo City Hall",
+    status: "scheduled",
+  },
+  {
+    title: "Community open house",
+    meeting_type: "community",
+    meeting_date: "2024-11-18",
+    location: "Mission Creek Library",
+    status: "agenda_posted",
+  },
+];
+
+const records = [
+  {
+    requester: "Bay Transit Watch",
+    topic: "CEQA traffic model",
+    contact: "records@btw.org",
+    received_on: "2024-10-02",
+    due_on: "2024-10-16",
+    status: "in_progress",
+  },
+];
+
+const salesTaxPrograms = [
+  {
+    measure: "Measure R+",
+    revenue: 1200000000,
+    expenditures: 450000000,
+    status: "active",
+    report: { notes: "Q3 expenditure plan submitted." },
+  },
+];
+
 async function upsertTenant() {
   const { data, error } = await supabase.from("tenants").select("id").eq("slug", TENANT_SLUG).maybeSingle();
   if (error) throw error;
@@ -113,6 +151,9 @@ async function upsertTenant() {
 async function clearExisting(tenantId) {
   const tables = [
     "community_inputs",
+    "meetings",
+    "records_requests",
+    "sales_tax_programs",
     "caltrans_phases",
     "grants",
     "projects",
@@ -189,6 +230,29 @@ async function seed() {
   }));
   const { error: communityError } = await supabase.from("community_inputs").insert(communityPayload);
   if (communityError) throw communityError;
+
+  const meetingsPayload = meetings.map((meeting) => ({
+    ...meeting,
+    tenant_id: tenantId,
+    project_id: projectMap["MC-CS-001"],
+  }));
+  const { error: meetingsError } = await supabase.from("meetings").insert(meetingsPayload);
+  if (meetingsError) throw meetingsError;
+
+  const recordsPayload = records.map((record) => ({
+    ...record,
+    tenant_id: tenantId,
+    project_id: projectMap["HL-ROW-004"],
+  }));
+  const { error: recordsError } = await supabase.from("records_requests").insert(recordsPayload);
+  if (recordsError) throw recordsError;
+
+  const salesPayload = salesTaxPrograms.map((program) => ({
+    ...program,
+    tenant_id: tenantId,
+  }));
+  const { error: salesError } = await supabase.from("sales_tax_programs").insert(salesPayload);
+  if (salesError) throw salesError;
 
   console.log("Seed data loaded for", TENANT_SLUG);
 }
