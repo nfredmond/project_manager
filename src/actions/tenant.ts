@@ -15,7 +15,7 @@ const DASHBOARD_PATHS = [
 
 export async function switchTenantAction(tenantId: string) {
   if (!tenantId) throw new Error("Tenant selection required");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const {
     data: { user },
     error: authError,

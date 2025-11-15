@@ -20,7 +20,7 @@ export async function createDocumentAction(formData: FormData) {
   if (!storage_path) {
     throw new Error("Upload a file first.");
   }
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase.from("documents").insert({
     ...parsed.data,
     storage_path,

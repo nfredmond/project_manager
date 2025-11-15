@@ -7,7 +7,7 @@ import { getServerSupabaseClient } from "@/lib/supabase/server";
 export async function updateTenantSettingsAction(formData: FormData) {
   const tenant = await getActiveTenant();
   if (!tenant) throw new Error("Select a tenant first.");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
 
   const updates = {
     name: formData.get("name") ?? tenant.name,
@@ -31,7 +31,7 @@ export async function updateTenantSettingsAction(formData: FormData) {
 export async function updateProfileAction(formData: FormData) {
   const profile = await getProfile();
   if (!profile) throw new Error("Sign in to update profile.");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const payload = {
     full_name: formData.get("full_name") ?? profile.full_name,
     title: formData.get("title") ?? profile.title,

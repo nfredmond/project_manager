@@ -20,7 +20,7 @@ export async function createRecordRequestAction(formData: FormData) {
   };
   if (!payload.requester) throw new Error("Requester is required.");
 
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase.from("records_requests").insert({
     ...payload,
     tenant_id: tenant.id,
@@ -35,7 +35,7 @@ export async function updateRecordStatusAction(formData: FormData) {
   const requestId = String(formData.get("id") ?? "");
   const status = String(formData.get("status") ?? "open");
   if (!requestId) throw new Error("Request id missing.");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase
     .from("records_requests")
     .update({ status })

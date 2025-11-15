@@ -14,7 +14,7 @@ export default async function AcceptInvitePage({ params }: Props) {
   if (!token) {
     notFound();
   }
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

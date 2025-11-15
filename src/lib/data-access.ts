@@ -17,7 +17,7 @@ import type {
 import { summarizeBudget } from "./data-helpers";
 
 export const getProfile = async () => {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const {
     data: { user },
     error: userError,
@@ -33,7 +33,7 @@ export const getProfile = async () => {
 };
 
 export const getTenants = async () => {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const {
     data: { user },
     error: authError,
@@ -78,7 +78,7 @@ export const getTenants = async () => {
 };
 
 export const getActiveTenant = async (): Promise<Tenant | null> => {
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const profile = await getProfile();
   const tenantUsers = await getTenants();
 
@@ -101,7 +101,7 @@ export const getActiveTenant = async (): Promise<Tenant | null> => {
 export const getActiveMembership = async () => {
   const tenant = await getActiveTenant();
   if (!tenant) return null;
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -118,7 +118,7 @@ export const getActiveMembership = async () => {
 export const getProjects = async (): Promise<Project[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data, error } = await supabase
     .from("projects")
     .select("*")
@@ -134,7 +134,7 @@ export const getProjects = async (): Promise<Project[]> => {
 export const getGrants = async (): Promise<Grant[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data, error } = await supabase
     .from("grants")
     .select("*, projects(name, code)")
@@ -150,7 +150,7 @@ export const getGrants = async (): Promise<Grant[]> => {
 export const getCaltransPhases = async (): Promise<CaltransPhase[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data, error } = await supabase
     .from("caltrans_phases")
     .select("*")
@@ -166,7 +166,7 @@ export const getCaltransPhases = async (): Promise<CaltransPhase[]> => {
 export const getCaltransInvoices = async () => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data, error } = await supabase
     .from("caltrans_invoices")
     .select("*")
@@ -182,7 +182,7 @@ export const getCaltransInvoices = async () => {
 export const getMeetings = async (): Promise<Meeting[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data } = await supabase
     .from("meetings")
     .select("*")
@@ -194,7 +194,7 @@ export const getMeetings = async (): Promise<Meeting[]> => {
 export const getRecordsRequests = async (): Promise<RecordsRequest[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data } = await supabase
     .from("records_requests")
     .select("*")
@@ -206,7 +206,7 @@ export const getRecordsRequests = async (): Promise<RecordsRequest[]> => {
 export const getDocuments = async (): Promise<Document[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data } = await supabase
     .from("documents")
     .select("*")
@@ -218,7 +218,7 @@ export const getDocuments = async (): Promise<Document[]> => {
 export const getSalesTaxPrograms = async () => {
   const tenant = await getActiveTenant();
   if (!tenant) return [] as SalesTaxProgram[];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data } = await supabase
     .from("sales_tax_programs")
     .select("*")
@@ -230,7 +230,7 @@ export const getSalesTaxPrograms = async () => {
 export const getCommunityInputs = async (): Promise<CommunityInput[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data } = await supabase
     .from("community_inputs")
     .select("*")
@@ -242,7 +242,7 @@ export const getCommunityInputs = async (): Promise<CommunityInput[]> => {
 export const getEnvironmentalFactors = async (): Promise<EnvironmentalFactor[]> => {
   const tenant = await getActiveTenant();
   if (!tenant) return [];
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { data } = await supabase
     .from("environmental_factors")
     .select("*")

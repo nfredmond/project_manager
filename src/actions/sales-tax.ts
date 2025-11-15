@@ -16,7 +16,7 @@ export async function createSalesTaxProgramAction(formData: FormData) {
   };
   if (!payload.measure) throw new Error("Measure label is required.");
 
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase.from("sales_tax_programs").insert({
     ...payload,
     tenant_id: tenant.id,
@@ -31,7 +31,7 @@ export async function updateSalesTaxStatusAction(formData: FormData) {
   const programId = String(formData.get("id") ?? "");
   const status = String(formData.get("status") ?? "draft");
   if (!programId) throw new Error("Program id required");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase
     .from("sales_tax_programs")
     .update({ status })

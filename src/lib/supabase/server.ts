@@ -14,15 +14,16 @@ function invariantEnv() {
   });
 }
 
-export function getServerSupabaseClient(): SupabaseClient {
+type CookieStore = {
+  get: (name: string) => { value?: string } | undefined;
+  set: (options: { name: string; value: string } & CookieOptions) => void;
+  delete: (options: { name: string } & CookieOptions) => void;
+};
+
+export async function getServerSupabaseClient(): Promise<SupabaseClient> {
   invariantEnv();
 
-  type CookieStore = {
-    get: (name: string) => { value?: string } | undefined;
-    set: (options: { name: string; value: string } & CookieOptions) => void;
-    delete: (options: { name: string } & CookieOptions) => void;
-  };
-  const cookieStore = (cookies() as unknown) as CookieStore;
+  const cookieStore = ((await cookies()) as unknown) as CookieStore;
 
   return (createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

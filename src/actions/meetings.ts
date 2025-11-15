@@ -27,7 +27,7 @@ export async function createMeetingAction(formData: FormData) {
     throw new Error("Meeting title is required.");
   }
 
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase.from("meetings").insert({
     ...payload,
     tenant_id: tenant.id,
@@ -42,7 +42,7 @@ export async function updateMeetingStatusAction(formData: FormData) {
   const meetingId = String(formData.get("id") ?? "");
   const status = String(formData.get("status") ?? FALLBACK_STATUS);
   if (!meetingId) throw new Error("Meeting id is required.");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase
     .from("meetings")
     .update({ status })

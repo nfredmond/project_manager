@@ -24,7 +24,7 @@ export async function createCaltransPhaseAction(formData: FormData) {
   if (!parsed.success) {
     throw new Error(parsed.error.errors.map((err) => err.message).join(", "));
   }
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase.from("caltrans_phases").insert({
     ...parsed.data,
     tenant_id: tenant.id,
@@ -37,7 +37,7 @@ export async function createCaltransPhaseAction(formData: FormData) {
 export async function createCaltransInvoiceAction(formData: FormData) {
   const tenant = await getActiveTenant();
   if (!tenant) throw new Error("Tenant not selected.");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const payload = {
     project_id: formData.get("project_id"),
     phase: formData.get("phase"),

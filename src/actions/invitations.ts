@@ -24,7 +24,7 @@ function getBaseUrl() {
 export async function createInvitationAction(input: { email: string; role: string }) {
   const tenant = await getActiveTenant();
   if (!tenant) throw new Error("Select a tenant before inviting members");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const {
     data: { user },
     error: authError,
@@ -67,7 +67,7 @@ export async function createInvitationAction(input: { email: string; role: strin
 
 export async function acceptInvitationAction(token: string) {
   if (!token) throw new Error("Missing invite token");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const {
     data: { user },
     error: authError,

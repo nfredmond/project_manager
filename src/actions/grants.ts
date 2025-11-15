@@ -23,7 +23,7 @@ export async function createGrantAction(formData: FormData) {
   if (!parsed.success) {
     throw new Error(parsed.error.errors.map((err) => err.message).join(", "));
   }
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase.from("grants").insert({
     ...parsed.data,
     tenant_id: tenant.id,
@@ -50,7 +50,7 @@ export async function updateGrantStageAction(grantId: string, stage: string) {
   if (!parsedStage.success) {
     throw new Error("Invalid stage");
   }
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase
     .from("grants")
     .update({ stage: parsedStage.data })

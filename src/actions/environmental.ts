@@ -7,7 +7,7 @@ import { getServerSupabaseClient } from "@/lib/supabase/server";
 export async function upsertEnvironmentalFactorAction(formData: FormData) {
   const tenant = await getActiveTenant();
   if (!tenant) throw new Error("No tenant selected");
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const payload = {
     project_id: formData.get("project_id"),
     factor: formData.get("factor"),

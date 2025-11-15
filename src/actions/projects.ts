@@ -20,7 +20,7 @@ export async function createProjectAction(formData: FormData) {
   if (!parsed.success) {
     throw new Error(parsed.error.errors.map((err) => err.message).join(", "));
   }
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase.from("projects").insert({
     ...parsed.data,
     tenant_id: tenant.id,
@@ -36,7 +36,7 @@ export async function updateProjectStatusAction(projectId: string, status: strin
   const parsedStatus = projectStatusSchema.safeParse(status);
   if (!parsedStatus.success) throw new Error("Invalid status");
 
-  const supabase = getServerSupabaseClient();
+  const supabase = await getServerSupabaseClient();
   const { error } = await supabase
     .from("projects")
     .update({ status: parsedStatus.data })
