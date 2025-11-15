@@ -35,15 +35,47 @@ export const getProfile = cache(async () => {
 
 export const getTenants = cache(async () => {
   const supabase = getServerSupabaseClient();
-  const { data, error } = await supabase
-    .from("tenant_users")
-    .select("*, tenants(*)")
-    .order("created_at", { ascending: true });
-  if (error) {
-    console.error("tenants error", error);
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
+  if (authError || !user) {
+    console.error("tenants auth error", authError);
     return [] as TenantUser[];
   }
-  return data as TenantUser[];
+
+  const { data: memberships, error: membershipsError } = await supabase
+    .from("tenant_users")
+    .select("tenant_id, user_id, role, status, invited_by, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true });
+
+  if (membershipsError || !memberships?.length) {
+    if (membershipsError) console.error("tenants memberships error", membershipsError);
+    return [] as TenantUser[];
+  }
+
+  const { data: tenantRows, error: tenantsError } = await supabase
+    .from("tenants")
+    .select("*")
+    .in(
+      "id",
+      memberships.map((membership) => membership.tenant_id),
+    );
+
+  if (tenantsError) {
+    console.error("tenants lookup error", tenantsError);
+  }
+
+  const tenantMap = new Map((tenantRows ?? []).map((tenant) => [tenant.id, tenant as Tenant]));
+
+  return memberships.map(
+    (membership) =>
+      ({
+        ...membership,
+        tenants: tenantMap.get(membership.tenant_id) ?? null,
+      }) as TenantUser,
+  );
 });
 
 export const getActiveTenant = cache(async (): Promise<Tenant | null> => {
