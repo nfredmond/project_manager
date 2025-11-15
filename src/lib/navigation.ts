@@ -12,6 +12,7 @@ import {
   Banknote,
   BarChart2,
   Settings,
+  Target,
 } from "lucide-react";
 
 export interface DashboardRoute {
@@ -22,6 +23,7 @@ export interface DashboardRoute {
 
 export const dashboardRoutes: DashboardRoute[] = [
   { label: "Overview", href: "/dashboard", icon: Gauge },
+  { label: "Action Center", href: "/action-center", icon: Target },
   { label: "Projects", href: "/projects", icon: FolderKanban },
   { label: "Caltrans", href: "/caltrans", icon: BadgeDollarSign },
   { label: "Grants", href: "/grants", icon: Sparkles },

@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
+import { MeetingAiSummary } from "@/components/meetings/meeting-ai-summary";
 
 const meetingTypes = ["board", "council", "community", "internal", "task_force"];
 const meetingStatuses = ["scheduled", "agenda_posted", "completed", "canceled"];
@@ -57,7 +58,7 @@ export default async function MeetingsPage() {
                       <TableCell>
                         <Badge variant={meeting.status === "completed" ? "secondary" : "outline"}>{meeting.status}</Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="space-y-2 text-right">
                         <form action={updateMeetingStatusAction} className="space-y-1">
                           <input type="hidden" name="id" value={meeting.id} />
                           <Select name="status" defaultValue={meeting.status ?? "scheduled"}>
@@ -76,6 +77,7 @@ export default async function MeetingsPage() {
                             Save
                           </Button>
                         </form>
+                        <MeetingAiSummary meeting={meeting} />
                       </TableCell>
                     </TableRow>
                   );

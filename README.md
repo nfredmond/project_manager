@@ -33,6 +33,10 @@ COMMUNITY_ALERT_EMAIL=engagement@example.com
 - **Meetings & PRA**: governance hub for agendas, recordings, and PRA fulfillment
 - **Sales tax**: Measure revenue dashboards and compliance notes
 - **Community portal**: Public page at `/community/[slug]` + moderation workspace, Slack/Resend notifications
+- **Action center**: Route `/action-center` shows cross-module deadlines with severity triage plus Slack/email digest endpoint
+- **AI meeting digest**: `/api/meetings/summarize` + dashboard UI to generate GPT-4o summaries and next steps
+- **Action center**: Cross-module deadline tracker that surfaces urgent LAPM, grant, meeting, and PRA tasks
+- **AI meeting digest**: `/api/meetings/summarize` + dashboard UI to generate GPT-4o summaries and next steps
 
 ### Supabase
 - Schema + RLS via `supabase/migrations/001_initial_schema.sql`. Apply with Supabase CLI or MCP `apply_migration`.
@@ -56,7 +60,15 @@ Visit `http://localhost:3000`. Signup creates tenant and admin membership. Dashb
 - `npm run lint` → ESLint + Next rules
 - `npm run typecheck` → strict TS
 - `npm run test` → Vitest unit tests (`tests/utils.test.ts`, `tests/data-access.test.ts`)
-- `npx playwright test` → smoke flow (landing + login)
+- `npx playwright test` → smoke flow (landing + login). Set the following env vars to run the full credentialed flow:
+  - `E2E_SUPABASE_EMAIL`
+  - `E2E_SUPABASE_PASSWORD`
+  - optional: `E2E_BASE_URL` (defaults to `http://localhost:3000`) and `E2E_COMMUNITY_SLUG` (defaults to `demo-mpo`)
+
+### Action center digest
+- Set `ACTION_CENTER_DIGEST_TOKEN` and optionally configure Slack/Resend env vars.
+- Trigger the digest via POST to `/api/action-center/digest?slug=demo-mpo` with header `Authorization: Bearer $ACTION_CENTER_DIGEST_TOKEN`.
+- Append `preview=true` to skip notifications and fetch the generated text payload for testing or cron dry-runs.
 
 ### Deployment
 - Configured for Vercel (project id from `VERCEL DATA.md` + `.vercel/project.json`).

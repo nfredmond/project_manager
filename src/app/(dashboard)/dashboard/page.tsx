@@ -1,10 +1,13 @@
+import Link from "next/link";
 import {
   getActiveTenant,
   getCaltransPhases,
   getCommunityInputs,
   getDashboardMetrics,
   getGrants,
+  getMeetings,
   getProjects,
+  getRecordsRequests,
 } from "@/lib/data-access";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
 import { CalendarDays, Leaf, MapPin, Sparkles, Target } from "lucide-react";
+import { ACTION_SEVERITY_META, ACTION_TYPE_LABELS, buildActionItems } from "@/lib/data-helpers";
 
 const grantStageCopy: Record<string, string> = {
   prospecting: "Research",
@@ -30,18 +34,21 @@ const communityCopy: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const [tenant, metrics, projects, grants, phases, inputs] = await Promise.all([
+  const [tenant, metrics, projects, grants, phases, inputs, meetings, records] = await Promise.all([
     getActiveTenant(),
     getDashboardMetrics(),
     getProjects(),
     getGrants(),
     getCaltransPhases(),
     getCommunityInputs(),
+    getMeetings(),
+    getRecordsRequests(),
   ]);
 
   const burnRate = metrics && metrics.total_budget > 0 ? Math.round((metrics.total_spent / metrics.total_budget) * 100) : 0;
   const recentCommunity = inputs.slice(0, 4);
   const recentGrants = grants.slice(0, 4);
+  const actionItems = buildActionItems({ projects, phases, grants, meetings, records }).slice(0, 5);
 
   return (
     <div className="space-y-6">
@@ -85,6 +92,45 @@ export default async function DashboardPage() {
             <p className="mt-2 text-sm text-muted-foreground">
               {formatCurrency(metrics?.total_spent)} of {formatCurrency(metrics?.total_budget)}
             </p>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Target className="h-4 w-4 text-primary" />
+              Action center
+            </CardTitle>
+            <CardDescription>Deadlines from LAPM, grants, meetings, and PRA.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {actionItems.length > 0 ? (
+              actionItems.map((item) => (
+                <Link
+                  key={`${item.type}-${item.id}`}
+                  href={item.href}
+                  className="flex items-center justify-between rounded-lg border p-3 transition hover:bg-muted/70"
+                >
+                  <div>
+                    <p className="text-xs uppercase text-muted-foreground">{ACTION_TYPE_LABELS[item.type] ?? item.type}</p>
+                    <p className="font-medium">{item.title}</p>
+                    <p className="text-xs text-muted-foreground">{item.description}</p>
+                  </div>
+                  <div className="text-right">
+                    <Badge variant={ACTION_SEVERITY_META[item.severity].variant}>
+                      {ACTION_SEVERITY_META[item.severity].label}
+                    </Badge>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {item.dueDate ? formatDate(item.dueDate) : "No deadline"}
+                    </p>
+                  </div>
+                </Link>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground">All clear – no pending deadlines.</p>
+            )}
           </CardContent>
         </Card>
       </section>

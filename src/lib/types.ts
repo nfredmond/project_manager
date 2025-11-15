@@ -126,6 +126,7 @@ export interface Meeting {
   agenda?: Record<string, unknown>[] | null;
   minutes?: Record<string, unknown>[] | null;
   resolutions?: string | null;
+  notes?: string | null;
   status?: string | null;
   recording_url?: string | null;
   created_at?: string;
@@ -200,6 +201,19 @@ export interface CommunityInput {
   source: string;
   metadata?: Record<string, unknown>;
   created_at?: string;
+}
+
+export type ActionItemType = "caltrans" | "grant" | "meeting" | "records";
+export type ActionItemSeverity = "overdue" | "soon" | "normal";
+
+export interface ActionItem {
+  id: string;
+  type: ActionItemType;
+  title: string;
+  description: string;
+  dueDate?: string | null;
+  href: string;
+  severity: ActionItemSeverity;
 }
 
 export interface DashboardMetrics {
