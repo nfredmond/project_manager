@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "prepare": "playwright install --with-deps",
+    "prepare": "node scripts/install-playwright.mjs",
     "seed": "node -r dotenv/config scripts/seed.mjs"
   },
   "dependencies": {
