@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 const roleOptions = [
   { value: "manager", label: "Manager (approvals + edits)" },
-  { value: "editor", label: "Editor (create + edit)" },
+  { value: "staff", label: "Staff (create + edit)" },
   { value: "viewer", label: "Viewer (read-only)" },
 ];
 

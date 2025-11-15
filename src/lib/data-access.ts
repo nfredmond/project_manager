@@ -199,4 +199,23 @@ export const getEnvironmentalFactors = cache(async (): Promise<EnvironmentalFact
   const tenant = await getActiveTenant();
   if (!tenant) return [];
   const supabase = getServerSupabaseClient();
-  the remainder trimmed for brevity but see file
+  const { data } = await supabase
+    .from("environmental_factors")
+    .select("*")
+    .eq("tenant_id", tenant.id)
+    .order("created_at", { ascending: false });
+  return (data as EnvironmentalFactor[]) ?? [];
+});
+export const getDashboardMetrics = cache(async (): Promise<DashboardMetrics | null> => {
+  const tenant = await getActiveTenant();
+  if (!tenant) return null;
+  const [projects, grants, inputs] = await Promise.all([getProjects(), getGrants(), getCommunityInputs()]);
+  const summary = summarizeBudget(projects);
+  return {
+    projects: projects.length,
+    open_grants: grants.filter((grant) => grant.stage !== "awarded" && grant.stage !== "denied").length,
+    community_inputs: inputs.filter((input) => input.status !== "archived").length,
+    total_budget: summary.totalBudget,
+    total_spent: summary.totalSpent,
+  };
+});

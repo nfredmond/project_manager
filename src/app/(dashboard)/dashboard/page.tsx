@@ -1,10 +1,33 @@
-import { getActiveTenant, getCaltransPhases, getCommunityInputs, getDashboardMetrics, getGrants, getProjects } from "@/lib/data-access";
+import {
+  getActiveTenant,
+  getCaltransPhases,
+  getCommunityInputs,
+  getDashboardMetrics,
+  getGrants,
+  getProjects,
+} from "@/lib/data-access";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
-import { CalendarDays, Leaf, MapPin, Target } from "lucide-react";
+import { CalendarDays, Leaf, MapPin, Sparkles, Target } from "lucide-react";
+
+const grantStageCopy: Record<string, string> = {
+  prospecting: "Research",
+  drafting: "Drafting",
+  submitted: "Submitted",
+  awarded: "Awarded",
+  denied: "Denied",
+  reporting: "Reporting",
+};
+
+const communityCopy: Record<string, string> = {
+  new: "New",
+  review: "In review",
+  approved: "Approved",
+  archived: "Archived",
+};
 
 export default async function DashboardPage() {
   const [tenant, metrics, projects, grants, phases, inputs] = await Promise.all([
@@ -17,12 +40,14 @@ export default async function DashboardPage() {
   ]);
 
   const burnRate = metrics && metrics.total_budget > 0 ? Math.round((metrics.total_spent / metrics.total_budget) * 100) : 0;
+  const recentCommunity = inputs.slice(0, 4);
+  const recentGrants = grants.slice(0, 4);
 
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-sm text-muted-foreground">Good morning</p>
+          <p className="text-sm text-muted-foreground">Pipeline + engagement</p>
           <h1 className="text-3xl font-semibold">Caltrans & grants overview</h1>
         </div>
         {tenant && <Badge variant="outline">Tenant · {tenant.name}</Badge>}
@@ -71,7 +96,7 @@ export default async function DashboardPage() {
               <Target className="h-4 w-4 text-primary" />
               Caltrans LAPM phases
             </CardTitle>
-            <CardDescription>Track E-76 and PED milestones per project.</CardDescription>
+            <CardDescription>Track E-76 submissions and PED milestones.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
@@ -116,13 +141,75 @@ export default async function DashboardPage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg">
-              <SparklesIcon />
+              <Sparkles className="h-4 w-4 text-primary" />
               Grant pipeline
             </CardTitle>
             <CardDescription>AI-ready narratives & deadlines.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {grants.slice(0, 5).map((grant) => (
+            {recentGrants.map((grant) => (
               <div key={grant.id} className="rounded-lg border p-3">
                 <div className="flex items-center justify-between text-sm">
-                  <p className="font-med
+                  <p className="font-medium">{grant.name}</p>
+                  <Badge variant="outline">{grantStageCopy[grant.stage] ?? grant.stage}</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">Due {formatDate(grant.deadline)}</p>
+                <p className="text-sm mt-2">
+                  {grant.projects?.name ?? "Unassigned"} · {formatCurrency(grant.requested_amount)}
+                </p>
+              </div>
+            ))}
+            {recentGrants.length === 0 && <p className="text-sm text-muted-foreground">No grants yet.</p>}
+          </CardContent>
+        </Card>
+      </section>
+
+      <section className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <MapPin className="h-4 w-4 text-primary" />
+              Community submissions
+            </CardTitle>
+            <CardDescription>Map feed from the public portal.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {recentCommunity.map((input) => (
+              <div key={input.id} className="rounded-lg border p-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">{input.display_name ?? "Anonymous"}</span>
+                  <Badge variant="outline">{communityCopy[input.status] ?? input.status}</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">{input.category}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{input.description}</p>
+              </div>
+            ))}
+            {recentCommunity.length === 0 && <p className="text-sm text-muted-foreground">No submissions yet.</p>}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Leaf className="h-4 w-4 text-primary" />
+              Environmental milestones
+            </CardTitle>
+            <CardDescription>Upcoming CEQA/NEPA checkpoints.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 text-sm">
+            {projects.slice(0, 4).map((project) => (
+              <div key={project.id} className="rounded-lg border p-3">
+                <p className="font-medium">{project.name}</p>
+                <p className="text-xs text-muted-foreground">PED {formatDate(project.ped)}</p>
+                <div className="mt-2 flex items-center gap-2 text-muted-foreground">
+                  <CalendarDays className="h-4 w-4" />
+                  <span>{formatDate(project.start_date)} – {formatDate(project.end_date)}</span>
+                </div>
+              </div>
+            ))}
+            {projects.length === 0 && <p className="text-sm text-muted-foreground">Add a project to see timeline data.</p>}
+          </CardContent>
+        </Card>
+      </section>
+    </div>
+  );
+}
