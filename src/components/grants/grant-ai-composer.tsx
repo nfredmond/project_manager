@@ -8,38 +8,36 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 import { Project } from "@/lib/types";
+import { useCompletion } from "ai/react";
+import { toast } from "sonner";
 
 const sections = ["Needs statement", "Project description", "Schedule", "Benefits", "Budget narrative"];
 
 export function GrantAIComposer({ projects }: { projects: Project[] }) {
-  const [loading, setLoading] = useState(false);
-  const [output, setOutput] = useState("");
   const [section, setSection] = useState(sections[0]);
   const [projectId, setProjectId] = useState(projects[0]?.id ?? "");
   const [grantType, setGrantType] = useState("Federal");
   const [context, setContext] = useState("");
 
+  const { completion, complete, isLoading } = useCompletion({
+    api: "/api/generate/grant-narrative",
+    onError: (error) => toast.error(error.message),
+  });
+
   const generate = async (event: React.FormEvent) => {
     event.preventDefault();
-    setLoading(true);
-    setOutput("");
+    if (!projectId) {
+      toast.error("Please select a project");
+      return;
+    }
+    
     try {
-      const response = await fetch("/api/generate/grant-narrative", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ projectId, grantType, section, context }),
+      await complete("", {
+        body: { projectId, grantType, section, context },
       });
-      if (!response.ok) {
-        throw new Error("Generation failed");
-      }
-      const { text } = await response.json();
-      setOutput(text);
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Unable to generate");
-    } finally {
-      setLoading(false);
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -96,15 +94,14 @@ export function GrantAIComposer({ projects }: { projects: Project[] }) {
               rows={4}
             />
           </div>
-          <Button type="submit" disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Generate narrative"}
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Generate narrative"}
           </Button>
         </form>
-        {output && (
-          <div className="mt-4 rounded-md border bg-muted/40 p-4 text-sm whitespace-pre-wrap">{output}</div>
+        {completion && (
+          <div className="mt-4 rounded-md border bg-muted/40 p-4 text-sm whitespace-pre-wrap">{completion}</div>
         )}
       </CardContent>
     </Card>
   );
 }
-

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import CommunityMap from "@/components/community/community-map";
 import { CommunitySubmissionForm } from "@/components/community/community-submission-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,6 +7,17 @@ import { getAdminSupabaseClient } from "@/lib/supabase/admin";
 
 interface Props {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const admin = getAdminSupabaseClient();
+  const { data: tenant } = await admin.from("tenants").select("name").eq("slug", slug).maybeSingle();
+
+  return {
+    title: `${tenant?.name ?? "Community"} | Public Engagement`,
+    description: `Submit feedback for ${tenant?.name} projects.`,
+  };
 }
 
 export default async function CommunitySlugPage({ params }: Props) {

@@ -1,7 +1,14 @@
 import Link from "next/link";
+import { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+
+export const metadata: Metadata = {
+  title: "Project Manager | Caltrans Compliance & Grants OS",
+  description:
+    "The operating system for Caltrans LAPM tracking, grant narrative generation, and community engagement.",
+};
 
 const highlights = [
   "Caltrans LAPM automation with E-76 status tracking",
@@ -12,7 +19,7 @@ const highlights = [
 
 export default function LandingPage() {
   return (
-    <main className="mx-auto flex min-h-screen w/full max-w-6xl flex-col gap-10 px-6 py-12">
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-6 py-12">
       <div className="rounded-3xl border bg-gradient-to-br from-primary/10 via-background to-background p-8 text-center shadow-sm">
         <Badge variant="secondary" className="mb-4">
           California Planning MVP

@@ -41,7 +41,11 @@ test.describe("authenticated smoke flow", () => {
     await gotoPath(page, "/projects");
     await expect(page.getByRole("heading", { name: /projects & delivery/i })).toBeVisible();
 
-    await page.getByRole("button", { name: /new project/i }).click();
+    // Wait for button to be interactive (handling potential network delay for role check)
+    const newProjectBtn = page.getByRole("button", { name: /new project/i });
+    await expect(newProjectBtn).toBeVisible({ timeout: 10000 });
+    await newProjectBtn.click();
+    
     const dialog = page.getByRole("dialog", { name: /create project/i });
     await dialog.getByLabel("Name").fill(`Playwright project ${Date.now()}`);
     await dialog.getByLabel("Code").fill(`PW-${Math.floor(Math.random() * 1000)}`);

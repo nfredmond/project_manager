@@ -1,18 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { cn } from "@/lib/utils";
-
-const appSans = Inter({
-  variable: "--font-app-sans",
-  subsets: ["latin"],
-});
-
-const appMono = JetBrains_Mono({
-  variable: "--font-app-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Project Manager | Caltrans, Grants & Engagement Platform",
@@ -23,7 +14,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn("min-h-screen bg-background font-sans antialiased", appSans.variable, appMono.variable)}>
+      <body className={cn("min-h-screen bg-background font-sans antialiased", GeistSans.variable, GeistMono.variable)}>
         <Providers>{children}</Providers>
       </body>
     </html>
